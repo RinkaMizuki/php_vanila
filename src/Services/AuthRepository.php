@@ -8,9 +8,52 @@ class AuthRepository extends BaseRepository
 {
   public function getById(int $id)
   {
-    $this->query('select * from users where id = :id');
-    $this->bind(':id', intval($id), PDO::PARAM_INT);
-    return $this->single();
+    // Prepare the SQL query
+    $this->query('SELECT *
+      FROM users AS u 
+      LEFT JOIN users_socials AS us ON us.user_id = u.id 
+      WHERE u.id = :id');
+
+    // Bind the parameter
+    $this->bind(':id', $id, PDO::PARAM_INT);
+
+    // Execute the query and get results
+    $results = $this->resultSet();
+
+    // Initialize user data
+    $user = null;
+
+    // Initialize an array for social accounts
+    $socials = [];
+
+    // Process results
+    foreach ($results as $row) {
+      if (!$user) {
+        // Create user object once
+        $user = [
+          'id' => $row['id'],
+          'fullname' => $row['fullname'],
+          'phone' => $row['phone'],
+          'major' => $row['major'],
+          'email' => $row['email'],
+          'url' => $row['url'],
+          'avatar' => $row['avatar'],
+          'socials' => [] // Initialize an empty array for socials
+        ];
+      }
+
+      // Append social link if exists
+      if ($row['social_id']) {
+        $socials["{$row['social_id']}"] = $row['link'];
+      }
+    }
+
+    // Attach socials to user if user is found
+    if ($user) {
+      $user['socials'] = $socials; // Assign the social accounts to the user
+    }
+
+    return $user; // Returns a single user object with all social links
   }
   public function getAll()
   {
@@ -19,7 +62,6 @@ class AuthRepository extends BaseRepository
   }
   public function createEntity($entity)
   {
-
     $this->query("insert into users (id, email, username, password, fullname, age, address, birthday, gender) values (:id, :email, :username, :password, :fullname, :age, :address, :birthday, :gender)");
 
     $this->bind(':id', 0, PDO::PARAM_INT);
@@ -57,5 +99,18 @@ class AuthRepository extends BaseRepository
     $this->query('select * from users where email = :email');
     $this->bind(':email', $email);
     return $this->single();
+  }
+  public function createAssociateSocial($entity)
+  {
+    $this->query("insert into users_socials (user_id, social_id, link, created_at, modified_at) values (:user_id, :social_id, :link, :created_at, :modified_at)");
+
+    $this->bind(':user_id', $entity->getUserId(), PDO::PARAM_INT);
+    $this->bind(':social_id', $entity->getSocialId(), PDO::PARAM_INT);
+    $this->bind(':link', $entity->getLink());
+    $this->bind(':created_at', date("Y-m-d H:i:s", time())); // bind as integer
+    $this->bind(':modified_at', date("Y-m-d H:i:s", time()));
+
+    //3. Execute the statement
+    return $this->execute();
   }
 }

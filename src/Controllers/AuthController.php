@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controller;
 use App\Models\UserModel;
+use App\Models\UserSocialModel;
 use App\Services\AuthRepository;
 use DateTime;
 use PDO;
@@ -148,6 +149,15 @@ class AuthController extends Controller
             $facebook = $_POST['facebook'];
             $twitter = $_POST['twitter'];
             $instagram = $_POST['instagram'];
+            $facebook_id = $_POST['facebookId'];
+            $twitter_id = $_POST['twitterId'];
+            $instagram_id = $_POST['instagramId'];
+
+            $socials = array($facebook_id => $facebook, $twitter_id => $twitter, $instagram_id => $instagram);
+            foreach ($socials as $key => $value) {
+                $social = new UserSocialModel($id, $key, $value, time(), time());
+                $this->authRepository->createAssociateSocial($social);
+            }
             // Kiểm tra xem file có được tải lên không
             if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
                 // Lấy thông tin tệp
