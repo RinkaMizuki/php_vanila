@@ -5,8 +5,6 @@ namespace App\Controllers;
 use App\Controller;
 use App\Models\UserModel;
 use App\Services\UserRepository;
-use DateTime;
-use PDO;
 
 class UserController extends Controller
 {

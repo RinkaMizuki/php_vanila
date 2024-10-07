@@ -4,8 +4,6 @@ $title = "User profile";
 
 // Include header
 include_once __DIR__ . "/Layouts/header.php";
-
-print_r($user);
 ?>
 
 <section class="vh-100" style="background-color: #f4f5f7;">
@@ -75,22 +73,22 @@ print_r($user);
 
 												<label class='form-label mt-3'>Socials</label>
 												<?php
-												foreach ($user['socials'] as $key => $value) {
+												foreach ($user['socials'] as $social) {
 													echo "<div class='input-group mb-3'>
-																		<span class='input-group-text' id={$key}>{$value}</span>
-																		<input
-																			name={$value}
-																			type='text'
-																			class='form-control'
-																			id={$key}
-																			aria-describedby={$value} 
-																			value={$social['link']}
-																		/>
-																		<input
-																			name={$value}Id
-																			value={$key}
-																			hidden
-																		/>
+																	<label class='input-group-text' for={$social['social_id']}>{$social['base_url']}</label>
+																	<input
+																		name={$social['name']}
+																		type='text'
+																		class='form-control'
+																		id={$social['social_id']}
+																		aria-describedby={$social['link']} 
+																		value={$social['link']}
+																	/>
+																	<input
+																		name={$social['name']}Id
+																		value={$social['social_id']}
+																		hidden
+																	/>
 															</div>";
 												}
 												?>

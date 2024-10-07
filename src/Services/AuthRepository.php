@@ -8,11 +8,11 @@ class AuthRepository extends BaseRepository
 {
   public function getById(int $id)
   {
-    // Prepare the SQL query
     $this->query('SELECT *
-      FROM users AS u 
-      LEFT JOIN users_socials AS us ON us.user_id = u.id 
-      WHERE u.id = :id');
+              FROM users AS u
+              LEFT JOIN users_socials AS us ON us.user_id = u.id
+              LEFT JOIN socials AS s ON s.id = us.social_id
+              WHERE u.id = :id');
 
     // Bind the parameter
     $this->bind(':id', $id, PDO::PARAM_INT);
@@ -43,8 +43,13 @@ class AuthRepository extends BaseRepository
       }
 
       // Append social link if exists
-      if ($row['social_id']) {
-        $socials["{$row['social_id']}"] = $row['link'];
+      if (!empty($row['social_id']) && !empty($row['link'])) {
+        $socials[] = [
+          'social_id' => $row['social_id'],
+          'link' => $row['link'],
+          'base_url' => $row['base_url'],
+          'name' => $row['name'] // assuming `name` is a field in your `socials` table
+        ];
       }
     }
 
@@ -53,7 +58,7 @@ class AuthRepository extends BaseRepository
       $user['socials'] = $socials; // Assign the social accounts to the user
     }
 
-    return $user; // Returns a single user object with all social links
+    return $user;
   }
   public function getAll()
   {

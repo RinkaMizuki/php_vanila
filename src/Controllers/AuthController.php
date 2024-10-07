@@ -78,6 +78,7 @@ class AuthController extends Controller
     public function postLoginUser()
     {
         if (isset($_SESSION['user'])) return $this->redirectAuthenticated();
+        session_regenerate_id(true);
         try {
             $email = $_POST['email'];
             $password = $_POST['password'];
