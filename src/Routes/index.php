@@ -10,6 +10,7 @@ use App\Router;
 $router = new Router();
 // Home
 $router->get('/', HomeController::class, 'index', [SessionMiddleware::class]);
+$router->get('/not-found', HomeController::class, 'getNotFoundPage');
 
 //User
 $router->get('/users', UserController::class, 'index', [SessionMiddleware::class, AuthMiddleware::class]);
@@ -25,7 +26,7 @@ $router->get('/register', AuthController::class, 'getRegisterForm', [SessionMidd
 $router->get('/logout', AuthController::class, 'getLogoutUser', [SessionMiddleware::class]);
 $router->post('/login', AuthController::class, 'postLoginUser', [SessionMiddleware::class]);
 $router->post('/register', AuthController::class, 'postRegisterUser', [SessionMiddleware::class]);
-$router->get('/auth/profile/:id', AuthController::class, 'getAuthProfile', [SessionMiddleware::class, AuthMiddleware::class]);
+$router->get('/auth/profile/:user_id', AuthController::class, 'getAuthProfile', [SessionMiddleware::class, AuthMiddleware::class]);
 $router->post('/auth/profile/update', AuthController::class, 'postUpdateAuthProfile', [SessionMiddleware::class, AuthMiddleware::class]);
 
 $router->dispatch();

@@ -87,7 +87,8 @@ class Router
             }
 
             // No route found for the method
-            throw new \Exception("No route found for $method: $route");
+            header("Location: /not-found");
+            exit();
         } catch (MediaNotSupportException $mse) {
             echo $mse->errorMessage();
         } catch (\Throwable $th) {

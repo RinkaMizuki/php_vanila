@@ -6,8 +6,6 @@ use App\Controller;
 use App\Models\UserModel;
 use App\Models\UserSocialModel;
 use App\Services\AuthRepository;
-use DateTime;
-use PDO;
 
 class AuthController extends Controller
 {
@@ -126,10 +124,15 @@ class AuthController extends Controller
             echo $th->__toString();
         }
     }
-    public function getAuthProfile($id)
+    public function getAuthProfile($user_id)
     {
         try {
-            $user = $this->authRepository->getById($id);
+
+            if ($user_id != $_SESSION['user']['id']) {
+                return $this->redirect('/not-found', 'User not found.');
+            }
+
+            $user = $this->authRepository->getById($user_id);
             $socials = $this->authRepository->getAll();
             if (empty($user)) {
                 return $this->redirect('/', 'User not found.');
@@ -157,7 +160,7 @@ class AuthController extends Controller
             $socials = array($facebook_id => $facebook, $twitter_id => $twitter, $instagram_id => $instagram);
             foreach ($socials as $key => $value) {
                 $social = new UserSocialModel($id, $key, $value, time(), time());
-                $this->authRepository->createAssociateSocial($social);
+                $this->authRepository->createOrUpdateAssociateSocial($social);
             }
             // Kiểm tra xem file có được tải lên không
             if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {

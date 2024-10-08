@@ -143,9 +143,11 @@ include_once __DIR__ . "/Layouts/header.php";
 								<h6>Social networks</h6>
 								<hr class="mt-0 mb-4">
 								<div class="d-flex justify-content-start">
-									<a href="#!"><i class="fab fa-facebook-f fa-lg me-3"></i></a>
-									<a href="#!"><i class="fab fa-twitter fa-lg me-3"></i></a>
-									<a href="#!"><i class="fab fa-instagram fa-lg"></i></a>
+									<?php
+									foreach ($user['socials'] as $user_social) {
+										echo "<a href='{$user_social['base_url']}{$user_social['link']}' class='me-3' target='_blank'>{$user_social['icon']}</a>";
+									}
+									?>
 								</div>
 							</div>
 						</div>

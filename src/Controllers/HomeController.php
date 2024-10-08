@@ -10,4 +10,8 @@ class HomeController extends Controller
     {
         $this->render('home');
     }
+    public function getNotFoundPage()
+    {
+        $this->render('not-found');
+    }
 }

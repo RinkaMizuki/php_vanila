@@ -61,6 +61,7 @@ class AuthRepository extends BaseRepository
       if (!empty($row['social_id']) && !empty($row['link'])) {
         $socials[] = [
           'social_id' => $row['social_id'],
+          'icon' => $row['icon'],
           'link' => $row['link'],
           'base_url' => $row['base_url'],
           'name' => $row['name'] // assuming `name` is a field in your `socials` table
@@ -119,20 +120,35 @@ class AuthRepository extends BaseRepository
     $this->bind(':email', $email);
     return $this->single();
   }
-  public function createAssociateSocial($entity)
+  public function createOrUpdateAssociateSocial($entity)
   {
-    $this->query("insert into users_socials (user_id, social_id, link, created_at, modified_at) values (:user_id, :social_id, :link, :created_at, :modified_at)");
+    if (!empty($entity->getUserId()) && !empty($entity->getSocialId())) {
+      $this->query("SELECT * FROM users_socials AS us WHERE us.user_id = :user_id AND us.social_id = :social_id");
+      $this->bind(':user_id', $entity->getUserId(), PDO::PARAM_INT);
+      $this->bind(':social_id', $entity->getSocialId(), PDO::PARAM_INT);
 
-    error_log(':user_id' . $entity->getUserId());
-    error_log(':social_id' . $entity->getSocialId());
-    error_log(':link' . $entity->getLink());
+      $is_existed_record = $this->single(); // execute and get frist row
+      if (!$is_existed_record) {
+        // create prepare statement
+        $this->query("INSERT INTO users_socials (user_id, social_id, link, created_at, modified_at) VALUES (:user_id, :social_id, :link, :created_at, :modified_at)");
 
-    $this->bind(':user_id', $entity->getUserId(), PDO::PARAM_INT);
-    $this->bind(':social_id', $entity->getSocialId(), PDO::PARAM_INT);
-    $this->bind(':link', $entity->getLink());
-    $this->bind(':created_at', date("Y-m-d H:i:s", time())); // bind as integer
-    $this->bind(':modified_at', date("Y-m-d H:i:s", time()));
-
+        // add parameters
+        $this->bind(':user_id', $entity->getUserId(), PDO::PARAM_INT);
+        $this->bind(':social_id', $entity->getSocialId(), PDO::PARAM_INT);
+        $this->bind(':link', $entity->getLink());
+        $this->bind(':created_at', date("Y-m-d H:i:s", time())); // bind as integer
+        $this->bind(':modified_at', date("Y-m-d H:i:s", time()));
+      } else {
+        // create prepare statement
+        $this->query("UPDATE users_socials SET link = :link, modified_at = :modified_at WHERE user_id = :user_id AND social_id = :social_id");
+        
+        // add parameters
+        $this->bind(':user_id', $entity->getUserId(), PDO::PARAM_INT);
+        $this->bind(':social_id', $entity->getSocialId(), PDO::PARAM_INT);
+        $this->bind(':link', $entity->getLink());
+        $this->bind(':modified_at', date("Y-m-d H:i:s", time()));
+      }
+    }
     //3. Execute the statement
     return $this->execute();
   }
