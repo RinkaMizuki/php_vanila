@@ -190,7 +190,14 @@ class AuthController extends Controller
                     return $this->redirect("/auth/profile/$id", "Failed upload avatar.");
                 }
             } else {
-                return $this->redirect("/auth/profile/$id", "No avatar uploaded or there was an error during the upload.");
+                $update_auth = UserModel::createFactory($id, '', $fullname, 0, '', '', false, $email, '', '', '', $phone, $major);
+
+                $is_success = $this->authRepository->updateEntity($update_auth);
+                if ($is_success) {
+                    return $this->redirect("/auth/profile/$id", "Updated profile successfully.");
+                } else {
+                    return $this->redirect("/auth/profile/$id", "Updated profile failure.");
+                }
             }
         } catch (\Throwable $th) {
             echo $th->__toString();

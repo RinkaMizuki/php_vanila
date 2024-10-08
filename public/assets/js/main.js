@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitProfileBtn = document.querySelector("#submit-profile-btn");
     const passwordInputElm = loginFormElm?.querySelector("#password");
     const avatarInputElm = document.querySelector("#avatar");
+    const avatarPreviewElm = document.querySelector("#avatar-preview");
+    const removeAvatarBtn = document.querySelector("#remove-avatar-btn");
 
     if (newUserBtn) {
         newUserBtn.onclick = function () {
@@ -84,6 +86,32 @@ document.addEventListener('DOMContentLoaded', () => {
             if (profileFormElm) {
                 profileFormElm.submit();
             }
+        }
+    }
+
+    if (avatarPreviewElm && avatarPreviewElm.src && avatarPreviewElm.src.includes(baseUrl)) {
+        (async () => {
+            try {
+                const url = avatarPreviewElm.src;
+                const blobFile = await (await fetch(url)).blob();
+                const fileList = new DataTransfer(); // Create a new DataTransfer object
+                let fileName = url.substring(url.lastIndexOf('/') + 1); // Extract the filename
+                fileName = decodeURIComponent(fileName.replace(/^\d+_/, ''));
+
+                const currFile = new File([blobFile], fileName, { type: blobFile.type }); // Create a new File object
+
+                fileList.items.add(currFile); // Add the file to the DataTransfer object
+
+                avatarInputElm.files = fileList.files; // Set the files property to the FileList
+            } catch (error) {
+                console.error('Error setting file:', error);
+            }
+        })();
+    }
+
+    if (removeAvatarBtn) {
+        removeAvatarBtn.onclick = function () {
+            avatarInputElm.value = '';
         }
     }
 });

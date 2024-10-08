@@ -16,8 +16,8 @@ include_once __DIR__ . "/Layouts/header.php";
 							style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
 							<img src="<?=
 												!empty($user['url']) ?  $user['url'] : 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp';
-												?>"
-								alt="Avatar" class="img-fluid my-5" style="width: 130px; height: 130px; object-fit: cover; border-radius: 50%" />
+												?>" class="rounded-circle mb-3 img-fluid my-5" style="width: 150px; height: 150px"
+								alt="Avatar" id="avatar-preview" />
 							<h5><? echo $user['fullname'] ? $user['fullname'] : '-' ?></h5>
 							<p><? echo $user['major'] ? $user['major'] : '-' ?></p>
 
@@ -68,9 +68,12 @@ include_once __DIR__ . "/Layouts/header.php";
 														value="<? echo strtok($user['email'], '@') ?>" />
 													<span class="input-group-text" id="basic-addon2">@gmail.com</span>
 												</div>
-
-												<input type="file" name="avatar" class="form-control" id="avatar" accept="image/*" />
-
+												<div style="position: relative">
+													<input type="file" name="avatar" class="form-control pe-4" id="avatar" accept="image/*" />
+													<?php if ($user['avatar']): ?>
+														<i id="remove-avatar-btn" role="button" class="fa-solid fa-xmark" style="position: absolute; top: 50%; right: 12px; transform: translateY(-50%);"></i>
+													<?php endif; ?>
+												</div>
 												<label class='form-label mt-3'>Socials</label>
 												<?php
 												foreach ($socials as $social) {
