@@ -73,23 +73,47 @@ include_once __DIR__ . "/Layouts/header.php";
 
 												<label class='form-label mt-3'>Socials</label>
 												<?php
-												foreach ($user['socials'] as $social) {
-													echo "<div class='input-group mb-3'>
-																	<label class='input-group-text' for={$social['social_id']}>{$social['base_url']}</label>
+												foreach ($socials as $social) {
+													$is_social_exist = false;
+													foreach ($user['socials'] as $user_social) {
+														if ($social['id'] === $user_social['social_id']) {
+															$is_social_exist = true;
+															echo
+															"<div class='input-group mb-3'>
+																	<label class='input-group-text' for={$user_social['social_id']}>{$user_social['base_url']}</label>
+																	<input
+																		name={$user_social['name']}
+																		type='text'
+																		class='form-control'
+																		id={$user_social['social_id']}
+																		aria-describedby={$user_social['link']} 
+																		value={$user_social['link']}
+																	/>
+																	<input
+																		name={$user_social['name']}Id
+																		value={$user_social['social_id']}
+																		hidden
+																	/>
+															</div>";
+														}
+													}
+													if (!$is_social_exist) {
+														echo
+														"<div class='input-group mb-3'>
+																	<label class='input-group-text' for={$social['id']}>{$social['base_url']}</label>
 																	<input
 																		name={$social['name']}
 																		type='text'
 																		class='form-control'
-																		id={$social['social_id']}
-																		aria-describedby={$social['link']} 
-																		value={$social['link']}
+																		id={$social['id']}
 																	/>
 																	<input
 																		name={$social['name']}Id
-																		value={$social['social_id']}
+																		value={$social['id']}
 																		hidden
 																	/>
 															</div>";
+													}
 												}
 												?>
 											</form>

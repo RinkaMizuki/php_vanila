@@ -24,7 +24,7 @@ class UserModel
     string $fullname,
     int $age,
     string $address,
-    ?string $birthday,
+    string $birthday,
     bool $gender = false,
     string $email = '',
     string $password = '',

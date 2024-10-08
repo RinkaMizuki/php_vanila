@@ -8,11 +8,26 @@ class AuthRepository extends BaseRepository
 {
   public function getById(int $id)
   {
-    $this->query('SELECT *
-              FROM users AS u
-              LEFT JOIN users_socials AS us ON us.user_id = u.id
-              LEFT JOIN socials AS s ON s.id = us.social_id
-              WHERE u.id = :id');
+    $this->query('SELECT
+                  u.id AS users_id,
+                  u.username,
+                  u.fullname,
+                  u.age,
+                  u.address,
+                  u.birthday,
+                  u.gender,
+                  u.email,
+                  u.password,
+                  u.avatar,
+                  u.url,
+                  u.phone,
+                  u.major,
+                  us.*, 
+                  s.*
+                  FROM users AS u
+                  LEFT JOIN users_socials AS us ON us.user_id = u.id
+                  LEFT JOIN socials AS s ON s.id = us.social_id
+                  WHERE u.id = :id');
 
     // Bind the parameter
     $this->bind(':id', $id, PDO::PARAM_INT);
@@ -31,7 +46,7 @@ class AuthRepository extends BaseRepository
       if (!$user) {
         // Create user object once
         $user = [
-          'id' => $row['id'],
+          'id' => $row['users_id'],
           'fullname' => $row['fullname'],
           'phone' => $row['phone'],
           'major' => $row['major'],
@@ -52,7 +67,6 @@ class AuthRepository extends BaseRepository
         ];
       }
     }
-
     // Attach socials to user if user is found
     if ($user) {
       $user['socials'] = $socials; // Assign the social accounts to the user
@@ -108,6 +122,10 @@ class AuthRepository extends BaseRepository
   public function createAssociateSocial($entity)
   {
     $this->query("insert into users_socials (user_id, social_id, link, created_at, modified_at) values (:user_id, :social_id, :link, :created_at, :modified_at)");
+
+    error_log(':user_id' . $entity->getUserId());
+    error_log(':social_id' . $entity->getSocialId());
+    error_log(':link' . $entity->getLink());
 
     $this->bind(':user_id', $entity->getUserId(), PDO::PARAM_INT);
     $this->bind(':social_id', $entity->getSocialId(), PDO::PARAM_INT);

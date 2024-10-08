@@ -63,7 +63,7 @@ class AuthController extends Controller
 
             error_log($password);
             error_log($confirm_password);
-            $new_auth = UserModel::createFactory(0, $username, '', 0, '', null, 0, $email, $password, '', '', '', '');
+            $new_auth = UserModel::createFactory(0, $username, '', 0, '', '', 0, $email, $password, '', '', '', '');
             $is_success = $this->authRepository->createEntity($new_auth);
 
             if (!$is_success) {
