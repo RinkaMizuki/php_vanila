@@ -12,10 +12,10 @@ use PDOException;
  */
 class Database
 {
-    private $host = 'localhost';
-    private $user = 'root';
-    private $pass = '09012003Aa@';
-    private $name = 'php_mvc_vanila';
+    private $host = 'localhost'; // change your host
+    private $user = 'root'; // change your user
+    private $pass = '09012003Aa@'; // change your pass
+    private $name = 'php_mvc_vanila'; // change your name
 
     private $dbh; // PDO instance
     private $stmt; // PDOStatement instance
